@@ -1,0 +1,28 @@
+# Use uma imagem base do Node.js para construir o aplicativo
+FROM node:lts-alpine AS builder
+
+# Defina o diretório de trabalho dentro do contêiner
+WORKDIR /app
+
+# Copie os arquivos package.json e package-lock.json (ou yarn.lock)
+COPY package*.json ./
+# Instale as dependências do projeto
+RUN npm install --omit=dev # ou yarn install --production
+
+# Copie o código-fonte da aplicação
+COPY . .
+
+# Construa o aplicativo React/Vite para produção
+RUN npm run build # ou yarn build
+
+# Use uma imagem base do Nginx para servir os arquivos estáticos
+FROM nginx:alpine
+
+# Copie os arquivos de construção do estágio anterior para o diretório de arquivos estáticos do Nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Exponha a porta em que o Nginx estará rodando
+EXPOSE 80
+
+# O comando padrão do Nginx já está configurado para servir arquivos estáticos
+# CMD ["nginx", "-g", "daemon off;"]

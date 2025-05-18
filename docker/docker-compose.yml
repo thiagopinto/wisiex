@@ -1,6 +1,18 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  app:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.backend
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network # Adicionando à rede
+
   db:
     image: postgres:16-alpine
     container_name: wisiex-db
@@ -11,13 +23,16 @@ services:
       POSTGRES_DB: ${DATABASE_NAME}
     volumes:
       - db_data:/var/lib/postgresql/data
-    ports:
-      - ${DATABASE_PORT}:5432 # Remove this in production for security!
+    # ports:  # Removendo a exposição da porta para fora do Docker
+    #   - ${DATABASE_PORT}:5432 # Remove this in production for security!
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      test:
+        ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network # Adicionando à rede
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -27,8 +42,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-admin}
     ports:
-      - "5672:5672"  # Porta para clientes AMQP
-      - "15672:15672"  # Porta para a interface de gerenciamento
+      - "5672:5672" # Porta para clientes AMQP
+      - "15672:15672" # Porta para a interface de gerenciamento
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -36,7 +51,70 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - app-network # Adicionando à rede
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090" # Porta interna do Prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro # Adicionando :ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-lifecycle" # Permite recarregar a configuração via HTTP
+    networks:
+      - app-network # Adicionando à rede
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000" # Alterando a porta do host para 3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-promepass}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana_datasources.yml:/etc/grafana/provisioning/datasources/all.yaml:ro # Adicionando :ro
+      - ./grafana_dashboards:/etc/grafana/provisioning/dashboards:ro # Adicionando :ro
+      - ./grafana_dashboard_providers.yml:/etc/grafana/provisioning/dashboards/all.yaml:ro # Adicionando :ro
+    depends_on:
+      - prometheus
+    networks:
+      - app-network # Adicionando à rede
+
+  frontend: # Adicionando o serviço do frontend
+    build:
+      context: ../frontend
+      dockerfile: ../docker/Dockerfile.frontend # Assume que você tem um Dockerfile separado para o front
+    ports:
+      - "8000:80" # Expõe o frontend na porta 8000
+    environment: # Defina as variáveis de ambiente necessárias para o seu frontend
+      - API_BASE_URL=http://app:3000 # ou o endereço do seu backend
+    depends_on:
+      - app # Garante que o backend esteja rodando antes do front
+    networks:
+      - app-network # Adicionando à rede
+
+  nginx: # Adicionando o Nginx como proxy reverso para o Prometheus
+    image: nginx:latest
+    ports:
+      - "9091:80" # Expõe o Prometheus (protegido) na porta 9091
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro # Monta a configuração do Nginx
+      - ./htpasswd_prometheus:/etc/nginx/.htpasswd_prometheus:ro # Monta o arquivo de senhas
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
+
+networks: # Criando uma única rede para todos os serviços
+  app-network:
+    driver: bridge
 
 volumes:
   db_data:
   rabbitmq_data:
+  prometheus_data:
+  grafana_data:

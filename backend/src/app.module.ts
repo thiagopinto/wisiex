@@ -10,7 +10,6 @@ import { LoggerModule } from 'nestjs-pino';
 import { QueueModule } from './queue/queue.module';
 import { WebsocketModule } from './websocket/websocket.module';
 import { OrderModule } from './order/order.module';
-import { MatchService } from './match/match.service';
 import { MatchModule } from './match/match.module';
 import { StatisticsModule } from './statistics/statistics.module';
 
@@ -31,8 +30,7 @@ import { StatisticsModule } from './statistics/statistics.module';
                 target: 'pino-pretty',
                 options: {
                   colorize: true,
-                  translateTime: 'SYS:standard',
-                  ignore: 'pid,hostname',
+                  singleLine: true,
                 },
               },
             }

@@ -1,0 +1,22 @@
+# Use uma imagem base do Node.js (certifique-se de escolher a versão correta)
+FROM node:lts-alpine
+
+# Defina o diretório de trabalho dentro do contêiner
+WORKDIR /app
+
+# Copie os arquivos package.json e package-lock.json (ou yarn.lock)
+COPY package*.json ./
+# Instale as dependências do projeto
+RUN npm install --omit=dev # Instalação otimizada para produção
+
+# Copie o código-fonte da aplicação
+COPY . .
+
+# Construa a aplicação NestJS (se necessário)
+RUN npm run build # ou yarn build, dependendo do seu gerenciador de pacotes
+
+# Exponha a porta em que a aplicação NestJS estará rodando
+EXPOSE 3000
+
+# Defina o comando para iniciar a aplicação
+CMD ["node", "dist/main.js"] # ou "npm", "start:prod", ou "yarn", "start:prod"
