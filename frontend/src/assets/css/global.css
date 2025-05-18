@@ -1,0 +1,13 @@
+@import url("./components/layout/MainLayout.css");
+@import url("./components/auth/LoginForm.css");
+@import url("./components/order/OrderPopover.css");
+ body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}

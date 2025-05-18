@@ -1,0 +1,29 @@
+/* Estilo para os botões de rádio */
+.btn-radio-group .btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo para o popover */
+.order-popover {
+  width: 320px;
+  max-width: 100%;
+}
+
+.order-popover .popover-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Destaque visual para o tipo selecionado */
+.btn-outline-success:not(:disabled):not(.disabled).active {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-outline-danger:not(:disabled):not(.disabled).active {
+  background-color: #dc3545;
+  color: white;
+}

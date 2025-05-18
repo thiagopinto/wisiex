@@ -1,0 +1,18 @@
+#login-popover {
+  width: 300px;
+  max-width: 100%;
+}
+
+.popover-header {
+  background-color: var(--bs-primary);
+  color: white;
+}
+
+.popover-header .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+}
+
+.popover-header .btn-close:hover {
+  opacity: 1;
+}
