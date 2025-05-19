@@ -12,6 +12,7 @@ import { WebsocketModule } from './websocket/websocket.module';
 import { OrderModule } from './order/order.module';
 import { MatchModule } from './match/match.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { StatisticsModule } from './statistics/statistics.module';
     OrderModule,
     MatchModule,
     StatisticsModule,
+    MetricsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
