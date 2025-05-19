@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -13,6 +13,7 @@ import { OrderModule } from './order/order.module';
 import { MatchModule } from './match/match.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { MetricsModule } from './metrics/metrics.module';
+import { MetricsMiddleware } from './metrics/metrics.middleware';
 
 @Module({
   imports: [
@@ -50,5 +51,9 @@ import { MetricsModule } from './metrics/metrics.module';
 export class AppModule {
   constructor() {
     //console.log('AppModule initialized 👌');
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(MetricsMiddleware).forRoutes('*'); // Aplica o middleware a todas as rotas
   }
 }
