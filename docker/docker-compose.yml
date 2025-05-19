@@ -70,19 +70,17 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3001:3000" # Alterando a porta do host para 3000
+      - "3001:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-promepass}
     volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana_datasources.yml:/etc/grafana/provisioning/datasources/all.yaml:ro # Adicionando :ro
-      - ./grafana_dashboards:/etc/grafana/provisioning/dashboards:ro # Adicionando :ro
-      - ./grafana_dashboard_providers.yml:/etc/grafana/provisioning/dashboards/all.yaml:ro # Adicionando :ro
+      - grafana_data:/var/lib/grafana  # Usando um volume nomeado
     depends_on:
       - prometheus
     networks:
-      - app-network # Adicionando à rede
+      - app-network
+
 
   frontend: # Adicionando o serviço do frontend
     build:

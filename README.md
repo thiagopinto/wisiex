@@ -1,4 +1,3 @@
-```markdown
 ## Manual de Acesso aos Serviços Docker
 
 Este manual fornece instruções sobre como acessar os serviços definidos no seu `docker-compose.yml`.
@@ -30,6 +29,8 @@ Após a inicialização dos serviços, você pode acessá-los através do seu na
 
 * **URL:** `http://localhost:3000`
 * O backend é a sua aplicação NestJS. Você pode acessar a API através desta URL. As rotas da API dependerão da configuração da sua aplicação NestJS. Por exemplo, se você tiver um controlador chamado `users` com uma rota `GET /users`, você poderá acessá-lo em `http://localhost:3000/users`.
+* **Swagger:** Se o Swagger estiver implementado na sua aplicação NestJS, ele estará disponível na mesma URL, geralmente em um caminho como `/api/docs` ou `/swagger`. Consulte a documentação da sua aplicação NestJS para o caminho correto. Por exemplo: `http://localhost:3000/api/docs`.
+    * A configuração atual do Docker e do Nginx permite que o Swagger seja acessado externamente, pois todo o tráfego para a porta 3000 é encaminhado para o contêiner do backend.
 
 #### Frontend
 
@@ -81,3 +82,4 @@ Após a inicialização dos serviços, você pode acessá-los através do seu na
 * **Variáveis de Ambiente:** As credenciais e configurações para os serviços são obtidas do arquivo `.env`.
 * **Segurança:** O banco de dados PostgreSQL não está exposto para acesso externo. Isso é uma prática recomendada de segurança. O acesso ao Prometheus é protegido por autenticação básica via Nginx.
 * **Porta do Grafana:** A porta do Grafana foi alterada para 3001 no arquivo `docker-compose.yml`. A URL de acesso foi atualizada para refletir essa mudança.
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
 import type { IOrder } from "../../interfaces/order";
 import orderService from "../../services/OrderService";

@@ -8,6 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 # Instale as dependências do projeto
 RUN npm install --omit=dev # ou yarn install --production
+RUN npm install --force
 
 # Copie o código-fonte da aplicação
 COPY . .

@@ -2,6 +2,6 @@ global:
   scrape_interval:     5s # Coleta métricas a cada 5 segundos
 
 scrape_configs:
-  - job_name: 'nestjs-app'
+  - job_name: 'app'
     static_configs:
-      - targets: ['nestjs-app:3000'] # Substitua por seu hostname/IP e porta do NestJS
+      - targets: ['app:3000'] # Substitua por seu hostname/IP e porta do NestJS
